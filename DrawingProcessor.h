@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Point.h"
+
+#include <set>
 #include <memory>
 #include <vector>
 #include <string>
@@ -19,6 +21,7 @@ private:
     uint64_t SizeX_;
     uint64_t SizeY_;
     std::vector<std::vector<int>> Buffer_;
+    std::vector<Point> DrawedPointsToEaraseShape;
 public:
     Canvas(const uint64_t SizeXParam, const uint64_t SizeYParam) : SizeX_(SizeXParam), SizeY_(SizeYParam)
     {
@@ -31,9 +34,28 @@ public:
         }
     }
 public:
+    void ClearDrawedPointsToEaraseShape()
+    {
+        DrawedPointsToEaraseShape.clear();
+        DrawedPointsToEaraseShape.reserve(1024 * 1024);
+    }
     void SetPoint(const int X, const int Y, int Color)
     {
-        Buffer_[Y][X] = Color;
+        if (X > 0 && X < SizeX_ && Y > 0 && Y < SizeY_)
+        {
+            if (Buffer_[Y][X] == '0')
+            {
+                Buffer_[Y][X] = Color;
+                DrawedPointsToEaraseShape.emplace_back(X, Y);
+            }
+            else
+            {
+                for (const auto& PointObject : DrawedPointsToEaraseShape)
+                    Buffer_[PointObject.GetYCoordinate()][PointObject.GetXCoordinate()] = '0';
+
+                return;
+            }
+        }
     }
 public:
     void DrawCanvas()
@@ -41,9 +63,21 @@ public:
         for (const auto& Line : Buffer_)
         {
             for (const auto& Char : Line)
-                std::cout << static_cast<char>(Char);
-            std::cout << std::endl;
+            {
+                switch (Char)
+                {
+                    case '9' : cout << blue; break;
+                    case '4' : cout << green; break;
+                    case '7' : cout << red; break;
+                    default : break;
+                }
+                cout << static_cast<char>(Char);
+                cout << background_black;
+            }
+            cout << std::endl;
         }
+
+        cout << endl;
     };
 };
 
@@ -60,6 +94,8 @@ public:
 public:
     void DrawCircle(const Point& CenterPoint, const double Radius)
     {
+        Canvas_.ClearDrawedPointsToEaraseShape();
+
         for (int w = 0; w < Radius * 2; w++)
             for (int h = 0; h < Radius * 2; h++)
             {
@@ -68,38 +104,33 @@ public:
                 if ((dx*dx + dy*dy) <= (Radius * Radius))
                     Canvas_.SetPoint(CenterPoint.GetXCoordinate() + dx, CenterPoint.GetYCoordinate() + dy, '7');
             }
-
-        std::cout << blue << "DrawCircle" << std::endl;
     };
 
     void EraseCircle(const Point& CenterPoint, const double Radius)
     {
-        std::cout << red << "EraseCircle" << std::endl;
     };
 
 public:
     void DrawRectangle(const Point& CornerPoint, const int Width, const int Height)
     {
+        Canvas_.ClearDrawedPointsToEaraseShape();
+
         for (int y = CornerPoint.GetYCoordinate(); y < CornerPoint.GetYCoordinate() + Height; y++)
             for (int x = CornerPoint.GetXCoordinate(); x < CornerPoint.GetXCoordinate() + Width; x++)
                 Canvas_.SetPoint(x, y, '4');
-
-        std::cout << green << "DrawRectangle" << std::endl;
     };
 
     void EraseRectangle(const Point& CornerPoint, const int Width, const int Height)
     {
-        std::cout << red << "EraseRectangle" << std::endl;
     };
 
-public:
+protected:
     void DrawHorizontalLine(const int XStart, const int XEnd, const int Y)
     {
         for (int x = XStart; x < XEnd; x++)
             Canvas_.SetPoint(x, Y, '9');
     }
 
-public:
     void FillBottomFlatTriangle(const Point& CornerPoint1, const Point& CornerPoint2, const Point& CornerPoint3)
     {
         double Invslope1 = static_cast<double>(CornerPoint2.GetXCoordinate() - CornerPoint1.GetXCoordinate()) / static_cast<double>(CornerPoint2.GetYCoordinate() - CornerPoint1.GetYCoordinate());
@@ -132,9 +163,16 @@ public:
         }
     }
 
-    void DrawTriangle(const Point& CornerPoint1, const Point& CornerPoint2, const Point& CornerPoint3)
+public:
+    void DrawTriangle(Point& CornerPoint1, Point& CornerPoint2, Point& CornerPoint3, const int Color)
     {
-        /* at first sort the three vertices by y-coordinate ascending so v1 is the topmost vertice sortVerticesAscendingByY() here we know that v1.y <= v2.y <= v3.y */
+        Canvas_.ClearDrawedPointsToEaraseShape();
+
+        vector<Point> Vtemp = {CornerPoint1, CornerPoint2, CornerPoint3};
+        sort(begin(Vtemp), end(Vtemp), [](const Point x1, const Point x2){ return x1.GetYCoordinate() < x2.GetYCoordinate(); });
+        CornerPoint1 = Vtemp[0];
+        CornerPoint2 = Vtemp[1];
+        CornerPoint3 = Vtemp[2];
 
         if (CornerPoint2.GetYCoordinate() == CornerPoint3.GetYCoordinate())
             FillBottomFlatTriangle(CornerPoint1, CornerPoint2, CornerPoint3);
@@ -147,12 +185,10 @@ public:
             FillBottomFlatTriangle(CornerPoint1, CornerPoint2, CornerPoint4);
             FillTopFlatTriangle(CornerPoint2, CornerPoint4, CornerPoint3);
         }
-
-        std::cout << blue << "DrawTriangle" << std::endl;
     };
 
-    void EraseTriangle(const Point& CornerPoint1, const Point& CornerPoint2, const Point& CornerPoint3)
+    void EraseTriangle(Point& CornerPoint1, Point& CornerPoint2, Point& CornerPoint3, const int Color)
     {
-        std::cout << red << "EraseTriangle" << std::endl;
+        DrawTriangle(CornerPoint1, CornerPoint2, CornerPoint3, '0');
     };
 };

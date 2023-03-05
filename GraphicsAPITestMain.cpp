@@ -30,7 +30,7 @@ int main()
 
     CanvasObject.DrawCanvas();
 
-    CommandPtr DrawTriangleCommandPtr = std::make_shared<DrawTriangleCommand>(DrawingProcessorObject, Point{50, 5 }, Point{45, 10 }, Point{65, 15 });
+    CommandPtr DrawTriangleCommandPtr = std::make_shared<DrawTriangleCommand>(DrawingProcessorObject, Point{45, 10 }, Point{65, 15 }, Point{50, 5 }, 9);
     CommandProcessorObject.Execute(DrawTriangleCommandPtr);
     MacroRecorderPtr->AddCommand(DrawTriangleCommandPtr);
 
@@ -38,6 +38,8 @@ int main()
 
     CommandProcessorObject.Execute(MacroRecorderPtr);
     CommandProcessorObject.UndoLastCommand();
+
+    CanvasObject.DrawCanvas();
 
     return 0;
 }
