@@ -3,30 +3,41 @@
 #include "CompositeCommand.h"
 #include "DrawCircleCommand.h"
 #include "DrawRectangleCommand.h"
+#include "DrawTriangleCommand.h"
 #include "DrawingProcessor.h"
 
 int main()
 {
     CommandProcessor CommandProcessorObject{ };
 
-    Canvas CanvasObject{ 20, 100 };
+    Canvas CanvasObject{ 100, 20 };
+
     CanvasObject.DrawCanvas();
+
     DrawingProcessor DrawingProcessorObject{ CanvasObject };
 
     auto MacroRecorderPtr = std::make_shared<CompositeCommand>();
 
-    Point CircleCenterPoint{ 20, 20 };
-    CommandPtr DrawCircleCommandPtr = std::make_shared<DrawCircleCommand>(DrawingProcessorObject, CircleCenterPoint, 10);
+    CommandPtr DrawCircleCommandPtr = std::make_shared<DrawCircleCommand>(DrawingProcessorObject, Point{ 17, 7 }, 5);
     CommandProcessorObject.Execute(DrawCircleCommandPtr);
     MacroRecorderPtr->AddCommand(DrawCircleCommandPtr);
 
-    Point RectangleCenterPoint{ 30, 10 };
-    CommandPtr DrawRectangleCommandPtr = std::make_shared<DrawRectangleCommand>(DrawingProcessorObject, RectangleCenterPoint, 5, 8);
+    CanvasObject.DrawCanvas();
+
+    CommandPtr DrawRectangleCommandPtr = std::make_shared<DrawRectangleCommand>(DrawingProcessorObject, Point{30, 10 }, 10, 5);
     CommandProcessorObject.Execute(DrawRectangleCommandPtr);
     MacroRecorderPtr->AddCommand(DrawRectangleCommandPtr);
+
+    CanvasObject.DrawCanvas();
+
+    CommandPtr DrawTriangleCommandPtr = std::make_shared<DrawTriangleCommand>(DrawingProcessorObject, Point{50, 5 }, Point{45, 10 }, Point{65, 15 });
+    CommandProcessorObject.Execute(DrawTriangleCommandPtr);
+    MacroRecorderPtr->AddCommand(DrawTriangleCommandPtr);
+
+    CanvasObject.DrawCanvas();
 
     CommandProcessorObject.Execute(MacroRecorderPtr);
     CommandProcessorObject.UndoLastCommand();
 
-  return 0;
+    return 0;
 }

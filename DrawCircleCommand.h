@@ -12,12 +12,12 @@ public:
     {
     }
 
-    virtual void Execute() override
+    void Execute() override
     {
         Receiver_.DrawCircle(CenterPoint_, Radius_);
     }
 
-    virtual void Undo() override
+    void Undo() override
     {
         Receiver_.EraseCircle(CenterPoint_, Radius_);
     }
