@@ -8,7 +8,7 @@ class DrawTriangleCommand final : public UndoableCommand
 {
 public:
     DrawTriangleCommand() = delete;
-    DrawTriangleCommand(DrawingProcessor& ReceiverParam, const Point& CornerPoint1Param, const Point& CornerPoint2Param, const Point& CornerPoint3Param, const int Color) noexcept : Receiver_{ ReceiverParam }, CornerPoint1_{ CornerPoint1Param }, CornerPoint2_{ CornerPoint2Param }, CornerPoint3_{ CornerPoint3Param }, Color_{Color}
+    DrawTriangleCommand(DrawingProcessor& ReceiverParam, const Point& CornerPoint1Param, const Point& CornerPoint2Param, const Point& CornerPoint3Param, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CornerPoint1_{ CornerPoint1Param }, CornerPoint2_{ CornerPoint2Param }, CornerPoint3_{ CornerPoint3Param }, Color_{ColorParam}
     {
     }
 
@@ -19,7 +19,7 @@ public:
 
     void Undo() override
     {
-        Receiver_.EraseTriangle(CornerPoint1_, CornerPoint2_, CornerPoint3_, Color_);
+        Receiver_.EraseTriangle(CornerPoint1_, CornerPoint2_, CornerPoint3_);
     }
 
 private:

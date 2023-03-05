@@ -22,5 +22,5 @@ public:
     }
 
 private:
-  std::stack<std::shared_ptr<Revertable>> CommandHistory;
+    std::stack<std::shared_ptr<Revertable>> CommandHistory;
 };

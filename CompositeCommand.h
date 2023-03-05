@@ -26,5 +26,5 @@ public:
     }
 
 private:
-  std::vector<CommandPtr> Commands;
+    std::vector<CommandPtr> Commands;
 };
