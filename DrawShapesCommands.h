@@ -8,13 +8,13 @@ class DrawCircleCommand final : public UndoableCommand
 {
 public:
     DrawCircleCommand() = delete;
-    DrawCircleCommand(DrawingProcessor& ReceiverParam, const Point& CenterPointParam, const double RadiusParam, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CenterPoint_{ CenterPointParam }, Radius_{ RadiusParam }, Color_{ColorParam}
+    DrawCircleCommand(DrawingProcessor& ReceiverParam, const Point& CenterPointParam, const double RadiusParam, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CenterPoint_{ CenterPointParam }, Radius_{ RadiusParam }, Color_{ ColorParam }
     {
     }
 
-    void Execute() override
+    bool Execute() override
     {
-        Receiver_.DrawCircle(CenterPoint_, Radius_, Color_);
+        return Receiver_.DrawCircle(CenterPoint_, Radius_, Color_);
     }
 
     void Undo() override
@@ -33,13 +33,13 @@ class DrawRectangleCommand final : public UndoableCommand
 {
 public:
     DrawRectangleCommand() = delete;
-    DrawRectangleCommand(DrawingProcessor& ReceiverParam, const Point& CornerPointParam, const int WidthParam, const int HeightParam, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CornerPoint_{ CornerPointParam }, Width_{ WidthParam }, Height_{ HeightParam }, Color_{ColorParam}
+    DrawRectangleCommand(DrawingProcessor& ReceiverParam, const Point& CornerPointParam, const int WidthParam, const int HeightParam, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CornerPoint_{ CornerPointParam }, Width_{ WidthParam }, Height_{ HeightParam }, Color_{ ColorParam }
     {
     }
 
-    void Execute() override
+    bool Execute() override
     {
-        Receiver_.DrawRectangle(CornerPoint_, Width_, Height_, Color_);
+        return Receiver_.DrawRectangle(CornerPoint_, Width_, Height_, Color_);
     }
 
     void Undo() override
@@ -59,13 +59,13 @@ class DrawTriangleCommand final : public UndoableCommand
 {
 public:
     DrawTriangleCommand() = delete;
-    DrawTriangleCommand(DrawingProcessor& ReceiverParam, const Point& CornerPoint1Param, const Point& CornerPoint2Param, const Point& CornerPoint3Param, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CornerPoint1_{ CornerPoint1Param }, CornerPoint2_{ CornerPoint2Param }, CornerPoint3_{ CornerPoint3Param }, Color_{ColorParam}
+    DrawTriangleCommand(DrawingProcessor& ReceiverParam, const Point& CornerPoint1Param, const Point& CornerPoint2Param, const Point& CornerPoint3Param, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CornerPoint1_{ CornerPoint1Param }, CornerPoint2_{ CornerPoint2Param }, CornerPoint3_{ CornerPoint3Param }, Color_{ ColorParam }
     {
     }
 
-    void Execute() override
+    bool Execute() override
     {
-        Receiver_.DrawTriangle(CornerPoint1_, CornerPoint2_, CornerPoint3_, Color_);
+        return Receiver_.DrawTriangle(CornerPoint1_, CornerPoint2_, CornerPoint3_, Color_);
     }
 
     void Undo() override

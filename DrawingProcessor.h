@@ -25,7 +25,7 @@ public:
     }
 
 public:
-    void DrawCircle(const Point& CenterPoint, const double Radius, const int Color)
+    bool DrawCircle(const Point& CenterPoint, const double Radius, const int Color)
     {
         Canvas_.ClearDrawedPointsToEaraseLastShapeInCaseOfConflict();
 
@@ -36,8 +36,10 @@ public:
                 int dy = static_cast<int>(Radius) - h;
                 if ((dx*dx + dy*dy) <= (Radius * Radius))
                     if (!Canvas_.SetPoint(CenterPoint.GetXCoordinate() + dx, CenterPoint.GetYCoordinate() + dy, Color))
-                        return;
+                        return false;
             }
+
+        return true;
     };
 
     void EraseCircle(const Point& CenterPoint, const double Radius)
@@ -48,14 +50,16 @@ public:
     };
 
 public:
-    void DrawRectangle(const Point& CornerPoint, const int Width, const int Height, const int Color)
+    bool DrawRectangle(const Point& CornerPoint, const int Width, const int Height, const int Color)
     {
         Canvas_.ClearDrawedPointsToEaraseLastShapeInCaseOfConflict();
 
         for (int y = CornerPoint.GetYCoordinate(); y < CornerPoint.GetYCoordinate() + Height; y++)
             for (int x = CornerPoint.GetXCoordinate(); x < CornerPoint.GetXCoordinate() + Width; x++)
                 if (!Canvas_.SetPoint(x, y, Color))
-                    return;
+                    return false;
+
+        return true;
     };
 
     void EraseRectangle(const Point& CornerPoint, const int Width, const int Height)
@@ -75,7 +79,7 @@ protected:
         return true;
     }
 
-    void FillBottomFlatTriangle(const Point& CornerPoint1, const Point& CornerPoint2, const Point& CornerPoint3, const int Color)
+    bool FillBottomFlatTriangle(const Point& CornerPoint1, const Point& CornerPoint2, const Point& CornerPoint3, const int Color)
     {
         double Invslope1 = static_cast<double>(CornerPoint2.GetXCoordinate() - CornerPoint1.GetXCoordinate()) / static_cast<double>(CornerPoint2.GetYCoordinate() - CornerPoint1.GetYCoordinate());
         double Invslope2 = static_cast<double>(CornerPoint3.GetXCoordinate() - CornerPoint1.GetXCoordinate()) / static_cast<double>(CornerPoint3.GetYCoordinate() - CornerPoint1.GetYCoordinate());
@@ -86,14 +90,16 @@ protected:
         for (int ScanLineY = CornerPoint1.GetYCoordinate(); ScanLineY <= CornerPoint2.GetYCoordinate(); ScanLineY++)
         {
             if (!DrawHorizontalLine(static_cast<int>(Curx1), static_cast<int>(Curx2), ScanLineY, Color))
-                return;
+                return false;
 
             Curx1 += Invslope1;
             Curx2 += Invslope2;
         }
+
+        return true;
     }
 
-    void FillTopFlatTriangle(const Point& CornerPoint1, const Point& CornerPoint2, const Point& CornerPoint3, const int Color)
+    bool FillTopFlatTriangle(const Point& CornerPoint1, const Point& CornerPoint2, const Point& CornerPoint3, const int Color)
     {
         double Invslope1 = static_cast<double>(CornerPoint3.GetXCoordinate() - CornerPoint1.GetXCoordinate()) / static_cast<double>(CornerPoint3.GetYCoordinate() - CornerPoint1.GetYCoordinate());
         double Invslope2 = static_cast<double>(CornerPoint3.GetXCoordinate() - CornerPoint2.GetXCoordinate()) / static_cast<double>(CornerPoint3.GetYCoordinate() - CornerPoint2.GetYCoordinate());
@@ -104,15 +110,17 @@ protected:
         for (int ScanLineY = CornerPoint3.GetYCoordinate(); ScanLineY > CornerPoint1.GetYCoordinate(); ScanLineY--)
         {
             if (!DrawHorizontalLine(static_cast<int>(Curx1), static_cast<int>(Curx2), ScanLineY, Color))
-                return;
+                return false;
 
             Curx1 -= Invslope1;
             Curx2 -= Invslope2;
         }
+
+        return true;
     }
 
 public:
-    void DrawTriangle(Point& CornerPoint1, Point& CornerPoint2, Point& CornerPoint3, const int Color)
+    bool DrawTriangle(Point& CornerPoint1, Point& CornerPoint2, Point& CornerPoint3, const int Color)
     {
         Canvas_.ClearDrawedPointsToEaraseLastShapeInCaseOfConflict();
 
@@ -123,16 +131,26 @@ public:
         CornerPoint3 = Vtemp[2];
 
         if (CornerPoint2.GetYCoordinate() == CornerPoint3.GetYCoordinate())
-            FillBottomFlatTriangle(CornerPoint1, CornerPoint2, CornerPoint3, Color);
+        {
+            if (!FillBottomFlatTriangle(CornerPoint1, CornerPoint2, CornerPoint3, Color))
+                return false;
+        }
         else
         if (CornerPoint1.GetYCoordinate() == CornerPoint2.GetYCoordinate())
-            FillTopFlatTriangle(CornerPoint1, CornerPoint2, CornerPoint3, Color);
+        {
+            if (!FillTopFlatTriangle(CornerPoint1, CornerPoint2, CornerPoint3, Color))
+                return false;
+        }
         else
         {
             Point CornerPoint4(static_cast<int>(static_cast<double>(CornerPoint1.GetXCoordinate()) + ((float)(CornerPoint2.GetYCoordinate() - CornerPoint1.GetYCoordinate()) / (float)(CornerPoint3.GetYCoordinate() - CornerPoint1.GetYCoordinate())) * static_cast<float>(CornerPoint3.GetXCoordinate() - CornerPoint1.GetXCoordinate())), CornerPoint2.GetYCoordinate());
-            FillBottomFlatTriangle(CornerPoint1, CornerPoint2, CornerPoint4, Color);
-            FillTopFlatTriangle(CornerPoint2, CornerPoint4, CornerPoint3, Color);
+            if (!FillBottomFlatTriangle(CornerPoint1, CornerPoint2, CornerPoint4, Color))
+                return false;
+            if (!FillTopFlatTriangle(CornerPoint2, CornerPoint4, CornerPoint3, Color))
+                return false;
         }
+
+        return true;
     };
 
     void EraseTriangle(Point& CornerPoint1, Point& CornerPoint2, Point& CornerPoint3)

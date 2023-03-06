@@ -6,10 +6,15 @@
 class CommandProcessor
 {
 public:
-    void Execute(const CommandPtr& Command)
+    bool Execute(const CommandPtr& Command)
     {
-        Command->Execute();
-        CommandHistory.push(Command);
+        if (Command->Execute())
+        {
+            CommandHistory.push(Command);
+            return true;
+        }
+
+        return false;
     }
 
     void UndoLastCommand()

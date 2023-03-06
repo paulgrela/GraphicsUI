@@ -2,6 +2,8 @@
 
 #define UNIX_PLATFORM
 
+#include "CommandProcessor.h"
+#include "CompositeCommand.h"
 #include "TerminalColorsUtils.h"
 
 #include <set>
@@ -21,7 +23,10 @@ private:
     uint64_t SizeX_;
     uint64_t SizeY_;
     std::vector<std::vector<int>> Buffer_;
-    std::vector<Point> DrawedPointsToEaraseLastShapeInCaseOfConflict;
+    std::vector<Point> DrawnPointsToEraseLastShapeInCaseOfConflict;
+private:
+    CommandProcessor CommandProcessorObject;
+    CompositeCommand CompositeDrawShapesCommandsObject;
 public:
     Canvas(const uint64_t SizeXParam, const uint64_t SizeYParam, const int ColorParam) : SizeX_(SizeXParam), SizeY_(SizeYParam), Color_{ColorParam}
     {
@@ -35,10 +40,21 @@ public:
         }
     }
 public:
+    void AddShapeCommand(const CommandPtr& Command)
+    {
+        if (CommandProcessorObject.Execute(Command))
+            CompositeDrawShapesCommandsObject.AddCommand(Command);
+    }
+    void UndoLastCommand()
+    {
+        CommandProcessorObject.UndoLastCommand();
+        CompositeDrawShapesCommandsObject.UndoLastCommand();
+    }
+public:
     void ClearDrawedPointsToEaraseLastShapeInCaseOfConflict()
     {
-        DrawedPointsToEaraseLastShapeInCaseOfConflict.clear();
-        DrawedPointsToEaraseLastShapeInCaseOfConflict.reserve(1024 * 1024);
+        DrawnPointsToEraseLastShapeInCaseOfConflict.clear();
+        DrawnPointsToEraseLastShapeInCaseOfConflict.reserve(1024 * 1024);
     }
 
     bool SetPoint(const int X, const int Y, int Color)
@@ -48,15 +64,15 @@ public:
             if (Buffer_[Y][X] == Color_ || UndoMode_)
             {
                 Buffer_[Y][X] = Color;
-                DrawedPointsToEaraseLastShapeInCaseOfConflict.emplace_back(Y, X);
+                DrawnPointsToEraseLastShapeInCaseOfConflict.emplace_back(Y, X);
             }
             else
             if (!UndoMode_)
             {
-                for (const auto& PointObject : DrawedPointsToEaraseLastShapeInCaseOfConflict)
+                for (const auto& PointObject : DrawnPointsToEraseLastShapeInCaseOfConflict)
                     Buffer_[PointObject.GetXCoordinate()][PointObject.GetYCoordinate()] = Color_;
 
-                DrawedPointsToEaraseLastShapeInCaseOfConflict.clear();
+                DrawnPointsToEraseLastShapeInCaseOfConflict.clear();
 
                 return false;
             }
