@@ -1,10 +1,9 @@
 
 #include "CommandProcessor.h"
 #include "CompositeCommand.h"
-#include "DrawCircleCommand.h"
-#include "DrawRectangleCommand.h"
-#include "DrawTriangleCommand.h"
+#include "DrawShapesCommands.h"
 #include "DrawingProcessor.h"
+#include "DrawingCanvas.h"
 
 int main()
 {
@@ -36,24 +35,18 @@ int main()
 
     CanvasObject.DrawCanvas();
 
-    //CommandPtr DrawTriangleCommandPtr1 = std::make_shared<DrawTriangleCommand>(DrawingProcessorObject, Point{28, 10 }, Point{65, 15 }, Point{50, 5 }, static_cast<int>('9'));
-    //CommandProcessorObject.Execute(DrawTriangleCommandPtr1);
+    CommandPtr DrawTriangleCommandPtr1 = std::make_shared<DrawTriangleCommand>(DrawingProcessorObject, Point{28, 10 }, Point{65, 15 }, Point{50, 5 }, static_cast<int>('9'));
+    CommandProcessorObject.Execute(DrawTriangleCommandPtr1);
 
     CommandPtr DrawCircleCommandPtr1 = std::make_shared<DrawCircleCommand>(DrawingProcessorObject, Point{ 50, 5 }, 7, static_cast<int>('2'));
     CommandProcessorObject.Execute(DrawCircleCommandPtr1);
 
-
     CanvasObject.DrawCanvas();
 
-//    CommandProcessorObject.Execute(MacroRecorderPtr);
-//    CommandProcessorObject.UndoLastCommand();
+    CommandProcessorObject.Execute(MacroRecorderPtr);
+    CommandProcessorObject.UndoLastCommand();
 
-//    CanvasObject.DrawCanvas();
-//
-//    CommandPtr DrawTriangleCommandPtr2 = std::make_shared<DrawTriangleCommand>(DrawingProcessorObject, Point{28, 10 }, Point{65, 15 }, Point{50, 5 }, static_cast<int>('9'));
-//    CommandProcessorObject.Execute(DrawTriangleCommandPtr2);
-//
-//    CanvasObject.DrawCanvas();
+    CanvasObject.DrawCanvas();
 
     return 0;
 }
