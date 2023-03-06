@@ -22,8 +22,11 @@ public:
         bool Result = false;
 
         for (const auto& Command : Commands)
+        {
+            Command->SetColor(Color_);
             if (Command->Execute())
                 Result = true;
+        }
 
         return Result;
     }

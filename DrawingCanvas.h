@@ -46,6 +46,7 @@ public:
         if (CommandProcessorObject.Execute(Command))
             CompositeDrawShapesCommandsObject.AddCommand(Command);
     }
+
     void UndoLastCommand()
     {
         CommandProcessorObject.UndoLastCommand();
