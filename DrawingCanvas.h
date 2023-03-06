@@ -86,6 +86,21 @@ public:
         CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->SetSetShapePositionToSubShape(false);
     }
 
+    void ChangeSelectedShapeSize(const uint64_t ShapeNumber, const double NewSize)
+    {
+        lock_guard<mutex> LockGuardObject{DrawingCanvasMutexObject};
+
+        int Color = CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->GetColor();
+
+        ChangeSelectedShapeColor(ShapeNumber, '0');
+
+        CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->SetSize(NewSize);
+
+        CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->SetSetShapeSizeToSubShape(true);
+        ChangeSelectedShapeColor(ShapeNumber, Color);
+        CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->SetSetShapeSizeToSubShape(false);
+    }
+
 public:
     void ClearDrawedPointsToEaraseLastShapeInCaseOfConflict()
     {

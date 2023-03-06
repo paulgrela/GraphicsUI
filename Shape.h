@@ -6,7 +6,7 @@
 class Shape
 {
 public:
-    explicit Shape(const int ColorParam, const int SizeParam, const Point PositionParam) : Color_{ ColorParam }, Size_{ 1 }, Position_{ PositionParam }
+    explicit Shape(const int ColorParam, const double SizeParam, const Point PositionParam) : Color_{ ColorParam }, Size_{ SizeParam }, Position_{ PositionParam }
     {
     }
 public:
@@ -19,7 +19,7 @@ public:
         return Color_;
     }
 public:
-    void SetSize(const int SizeParam)
+    void SetSize(const double SizeParam)
     {
         Size_ = SizeParam;
     }
@@ -34,12 +34,16 @@ public:
     }
 protected:
     int Color_;
-    int Size_;
+    double Size_;
     Point Position_;
 public:
     void SetSetShapeColorToSubShape(const bool SetShapeColorToSubShapeParam)
     {
         SetShapeColorToSubShape = SetShapeColorToSubShapeParam;
+    }
+    void SetSetShapeSizeToSubShape(const bool SetShapeSizeToSubShapeParam)
+    {
+        SetShapeSizeToSubShape = SetShapeSizeToSubShapeParam;
     }
     void SetSetShapePositionToSubShape(const bool SetShapePositionToSubShapeParam)
     {
@@ -47,13 +51,14 @@ public:
     }
 protected:
     bool SetShapeColorToSubShape = false;
+    bool SetShapeSizeToSubShape = false;
     bool SetShapePositionToSubShape = false;
 };
 
 class UndoableDrawShapeCommand: public UndoableCommand, public Shape
 {
 public:
-    explicit UndoableDrawShapeCommand(const int ColorParam, const int SizeParam, const Point PositionParam) : Shape(ColorParam, SizeParam, PositionParam)
+    explicit UndoableDrawShapeCommand(const int ColorParam, const double SizeParam, const Point PositionParam) : Shape(ColorParam, SizeParam, PositionParam)
     {
     }
 };

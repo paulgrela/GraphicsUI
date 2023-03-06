@@ -9,24 +9,24 @@ class DrawCircleCommand final : public UndoableDrawShapeCommand
 {
 public:
     DrawCircleCommand() = delete;
-    DrawCircleCommand(DrawingProcessor& ReceiverParam, const Point& CenterPointParam, const double RadiusParam, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, Radius_{ RadiusParam }, UndoableDrawShapeCommand(ColorParam, 1, CenterPointParam)
+    DrawCircleCommand(DrawingProcessor& ReceiverParam, const Point& CenterPointParam, const double RadiusParam, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, UndoableDrawShapeCommand(ColorParam, RadiusParam, CenterPointParam)
     {
     }
 
     bool Execute() override
     {
-        return Receiver_.DrawCircle({ Position_.GetXCoordinate(), Position_.GetYCoordinate() }, Radius_, Color_);
+        return Receiver_.DrawCircle({ Position_.GetXCoordinate(), Position_.GetYCoordinate() }, Size_, Color_);
     }
 
     void Undo() override
     {
-        Receiver_.EraseCircle({ Position_.GetXCoordinate(), Position_.GetYCoordinate() }, Radius_);
+        Receiver_.EraseCircle({ Position_.GetXCoordinate(), Position_.GetYCoordinate() }, Size_);
     }
 
 private:
     DrawingProcessor& Receiver_;
-    const double Radius_;
 };
+
 
 class DrawRectangleCommand final : public UndoableDrawShapeCommand
 {

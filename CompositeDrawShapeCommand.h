@@ -25,6 +25,8 @@ public:
         {
             if (SetShapeColorToSubShape)
                 Command->SetColor(Color_);
+            if (SetShapeSizeToSubShape)
+                Command->SetSize(Size_);
             if (SetShapePositionToSubShape)
                 Command->AddPosition(Position_);
 
