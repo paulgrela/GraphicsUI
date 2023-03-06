@@ -1,13 +1,18 @@
 #pragma once
 
-#include "Command.h"
+#include "Shape.h"
+
 #include <ranges>
 #include <vector>
 
-class CompositeCommand final : public UndoableCommand
+class CompositeDrawShapeCommand final : public UndoableDrawShapeCommand
 {
 public:
-    void AddCommand(const CommandPtr& Command)
+    explicit CompositeDrawShapeCommand(const int ColorParam) : UndoableDrawShapeCommand(ColorParam)
+    {
+    }
+public:
+    void AddCommand(const DrawShapeCommandPtr& Command)
     {
         Commands.push_back(Command);
     }
@@ -40,6 +45,14 @@ public:
         Commands.pop_back();
     }
 
+    DrawShapeCommandPtr GetCommand(uint64_t ShapeNumber)
+    {
+        if (ShapeNumber < Commands.size())
+            return Commands[ShapeNumber];
+        else
+            return nullptr;
+    }
+
 private:
-    std::vector<CommandPtr> Commands;
+    std::vector<DrawShapeCommandPtr> Commands;
 };

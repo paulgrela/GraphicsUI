@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Command.h"
+#include "DrawingCanvas.h"
 #include "DrawingProcessor.h"
 #include "Point.h"
 
-class DrawCircleCommand final : public UndoableCommand
+class DrawCircleCommand final : public UndoableDrawShapeCommand//public UndoableCommand
 {
 public:
     DrawCircleCommand() = delete;
-    DrawCircleCommand(DrawingProcessor& ReceiverParam, const Point& CenterPointParam, const double RadiusParam, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CenterPoint_{ CenterPointParam }, Radius_{ RadiusParam }, Color_{ ColorParam }
+    DrawCircleCommand(DrawingProcessor& ReceiverParam, const Point& CenterPointParam, const double RadiusParam, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CenterPoint_{ CenterPointParam }, Radius_{ RadiusParam }, UndoableDrawShapeCommand(ColorParam)
     {
     }
 
@@ -26,14 +27,13 @@ private:
     DrawingProcessor& Receiver_;
     const Point CenterPoint_;
     const double Radius_;
-    const int Color_;
 };
 
-class DrawRectangleCommand final : public UndoableCommand
+class DrawRectangleCommand final : public UndoableDrawShapeCommand
 {
 public:
     DrawRectangleCommand() = delete;
-    DrawRectangleCommand(DrawingProcessor& ReceiverParam, const Point& CornerPointParam, const int WidthParam, const int HeightParam, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CornerPoint_{ CornerPointParam }, Width_{ WidthParam }, Height_{ HeightParam }, Color_{ ColorParam }
+    DrawRectangleCommand(DrawingProcessor& ReceiverParam, const Point& CornerPointParam, const int WidthParam, const int HeightParam, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CornerPoint_{ CornerPointParam }, Width_{ WidthParam }, Height_{ HeightParam }, UndoableDrawShapeCommand(ColorParam)
     {
     }
 
@@ -52,14 +52,13 @@ private:
     const Point CornerPoint_;
     const int Width_;
     const int Height_;
-    const int Color_;
 };
 
-class DrawTriangleCommand final : public UndoableCommand
+class DrawTriangleCommand final : public UndoableDrawShapeCommand
 {
 public:
     DrawTriangleCommand() = delete;
-    DrawTriangleCommand(DrawingProcessor& ReceiverParam, const Point& CornerPoint1Param, const Point& CornerPoint2Param, const Point& CornerPoint3Param, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CornerPoint1_{ CornerPoint1Param }, CornerPoint2_{ CornerPoint2Param }, CornerPoint3_{ CornerPoint3Param }, Color_{ ColorParam }
+    DrawTriangleCommand(DrawingProcessor& ReceiverParam, const Point& CornerPoint1Param, const Point& CornerPoint2Param, const Point& CornerPoint3Param, const int ColorParam) noexcept : Receiver_{ ReceiverParam }, CornerPoint1_{ CornerPoint1Param }, CornerPoint2_{ CornerPoint2Param }, CornerPoint3_{ CornerPoint3Param }, UndoableDrawShapeCommand(ColorParam)
     {
     }
 
@@ -78,5 +77,4 @@ private:
     Point CornerPoint1_;
     Point CornerPoint2_;
     Point CornerPoint3_;
-    int Color_;
 };

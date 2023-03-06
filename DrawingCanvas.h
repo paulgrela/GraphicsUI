@@ -2,8 +2,9 @@
 
 #define UNIX_PLATFORM
 
+#include "Point.h"
 #include "CommandProcessor.h"
-#include "CompositeCommand.h"
+#include "CompositeDrawShapeCommand.h"
 #include "TerminalColorsUtils.h"
 
 #include <set>
@@ -26,9 +27,9 @@ private:
     std::vector<Point> DrawnPointsToEraseLastShapeInCaseOfConflict;
 private:
     CommandProcessor CommandProcessorObject;
-    CompositeCommand CompositeDrawShapesCommandsObject;
+    CompositeDrawShapeCommand CompositeDrawShapesCommandsObject;
 public:
-    Canvas(const uint64_t SizeXParam, const uint64_t SizeYParam, const int ColorParam) : SizeX_(SizeXParam), SizeY_(SizeYParam), Color_{ColorParam}
+    Canvas(const uint64_t SizeXParam, const uint64_t SizeYParam, const int ColorParam) : SizeX_(SizeXParam), SizeY_(SizeYParam), Color_{ ColorParam }, CompositeDrawShapesCommandsObject(ColorParam)
     {
         UndoMode_ = false;
         Buffer_ = std::vector<std::vector<int>>(SizeY_);
@@ -40,7 +41,7 @@ public:
         }
     }
 public:
-    void AddShapeCommand(const CommandPtr& Command)
+    void AddShapeCommand(const DrawShapeCommandPtr& Command)
     {
         if (CommandProcessorObject.Execute(Command))
             CompositeDrawShapesCommandsObject.AddCommand(Command);
@@ -50,6 +51,15 @@ public:
         CommandProcessorObject.UndoLastCommand();
         CompositeDrawShapesCommandsObject.UndoLastCommand();
     }
+
+    void ChangeSelectedShapeColor(const uint64_t ShapeNumber, const int NewColor)
+    {
+        CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->SetColor(NewColor);
+        SetUndoMode(true);
+        CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->Execute();
+        SetUndoMode(false);
+    }
+
 public:
     void ClearDrawedPointsToEaraseLastShapeInCaseOfConflict()
     {
@@ -91,7 +101,7 @@ public:
         return Color_;
     }
 public:
-    void DrawCanvas()
+    void Draw()
     {
         for (const auto& Line : Buffer_)
         {
