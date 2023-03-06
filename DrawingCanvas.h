@@ -31,7 +31,7 @@ private:
 private:
     static inline std::mutex DrawingCanvasMutexObject;
 public:
-    Canvas(const uint64_t SizeXParam, const uint64_t SizeYParam, const int ColorParam) : SizeX_(SizeXParam), SizeY_(SizeYParam), Color_{ ColorParam }, CompositeDrawShapesCommandsObject(ColorParam)
+    Canvas(const uint64_t SizeXParam, const uint64_t SizeYParam, const int ColorParam) : SizeX_(SizeXParam), SizeY_(SizeYParam), Color_{ ColorParam }, CompositeDrawShapesCommandsObject(ColorParam, 1, {1, 1})
     {
         UndoMode_ = false;
         Buffer_ = std::vector<std::vector<int>>(SizeY_);
@@ -69,6 +69,21 @@ public:
         CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->Execute();
         SetUndoMode(false);
         CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->SetSetShapeColorToSubShape(false);
+    }
+
+    void ChangeSelectedShapePosition(const uint64_t ShapeNumber, const Point NewPosition)
+    {
+        lock_guard<mutex> LockGuardObject{DrawingCanvasMutexObject};
+
+        int Color = CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->GetColor();
+
+        ChangeSelectedShapeColor(ShapeNumber, '0');
+
+        CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->SetPosition(NewPosition);
+
+        CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->SetSetShapePositionToSubShape(true);
+        ChangeSelectedShapeColor(ShapeNumber, Color);
+        CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->SetSetShapePositionToSubShape(false);
     }
 
 public:

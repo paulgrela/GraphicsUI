@@ -12,7 +12,7 @@ int main()
 
     DrawingProcessor DrawingProcessorObject{ CanvasObject };
 
-    auto MacroRecorderPtr = std::make_shared<CompositeDrawShapeCommand>('3');
+    auto MacroRecorderPtr = std::make_shared<CompositeDrawShapeCommand>('3', 1, Point{1, 1});
 
     DrawShapeCommandPtr DrawCircleCommandPtr = std::make_shared<DrawCircleCommand>(DrawingProcessorObject, Point{ 17, 7 }, 5, static_cast<int>('2'));
     MacroRecorderPtr->AddCommand(DrawCircleCommandPtr);
@@ -33,7 +33,10 @@ int main()
     DrawShapeCommandPtr DrawCircleCommandPtr1 = std::make_shared<DrawCircleCommand>(DrawingProcessorObject, Point{ 50, 5 }, 7, static_cast<int>('2'));
     CanvasObject.AddShapeCommand(DrawCircleCommandPtr1);
 
-    DrawShapeCommandPtr DrawRectangleCommandPtr1 = std::make_shared<DrawRectangleCommand>(DrawingProcessorObject, Point{ 85, 10 }, 5, 5, static_cast<int>('4'));
+    DrawShapeCommandPtr DrawCircleCommandPtr2 = std::make_shared<DrawCircleCommand>(DrawingProcessorObject, Point{ 85, 10 }, 5, static_cast<int>('4'));
+    CanvasObject.AddShapeCommand(DrawCircleCommandPtr2);
+
+    DrawShapeCommandPtr DrawRectangleCommandPtr1 = std::make_shared<DrawRectangleCommand>(DrawingProcessorObject, Point{ 93, 10 }, 4, 4, static_cast<int>('4'));
     CanvasObject.AddShapeCommand(DrawRectangleCommandPtr1);
 
     CanvasObject.Draw();
@@ -43,6 +46,22 @@ int main()
     CanvasObject.Draw();
 
     CanvasObject.ChangeSelectedShapeColor(0, static_cast<int>('5'));
+
+    CanvasObject.Draw();
+
+    CanvasObject.ChangeSelectedShapePosition(1, { 75,7 });
+
+    CanvasObject.Draw();
+
+    CanvasObject.ChangeSelectedShapePosition(2, { 90,15 });
+
+    CanvasObject.Draw();
+
+    CanvasObject.ChangeSelectedShapePosition(0, { 3,3 });
+
+    CanvasObject.Draw();
+
+    CanvasObject.UndoLastCommand();
 
     CanvasObject.Draw();
 

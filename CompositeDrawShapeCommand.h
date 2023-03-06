@@ -8,7 +8,7 @@
 class CompositeDrawShapeCommand final : public UndoableDrawShapeCommand
 {
 public:
-    explicit CompositeDrawShapeCommand(const int ColorParam) : UndoableDrawShapeCommand(ColorParam)
+    explicit CompositeDrawShapeCommand(const int ColorParam, const int SizeParam, const Point PositionParam) : UndoableDrawShapeCommand(ColorParam, SizeParam, PositionParam)
     {
     }
 public:
@@ -25,6 +25,8 @@ public:
         {
             if (SetShapeColorToSubShape)
                 Command->SetColor(Color_);
+            if (SetShapePositionToSubShape)
+                Command->AddPosition(Position_);
 
             if (Command->Execute())
                 Result = true;
