@@ -28,6 +28,8 @@ private:
 private:
     CommandProcessor CommandProcessorObject;
     CompositeDrawShapeCommand CompositeDrawShapesCommandsObject;
+private:
+    static inline std::mutex DrawingCanvasMutexObject;
 public:
     Canvas(const uint64_t SizeXParam, const uint64_t SizeYParam, const int ColorParam) : SizeX_(SizeXParam), SizeY_(SizeYParam), Color_{ ColorParam }, CompositeDrawShapesCommandsObject(ColorParam)
     {
@@ -43,27 +45,37 @@ public:
 public:
     void AddShapeCommand(const DrawShapeCommandPtr& Command)
     {
+        lock_guard<mutex> LockGuardObject{DrawingCanvasMutexObject};
+
         if (CommandProcessorObject.Execute(Command))
             CompositeDrawShapesCommandsObject.AddCommand(Command);
     }
 
     void UndoLastCommand()
     {
+        lock_guard<mutex> LockGuardObject{DrawingCanvasMutexObject};
+
         CommandProcessorObject.UndoLastCommand();
         CompositeDrawShapesCommandsObject.UndoLastCommand();
     }
 
     void ChangeSelectedShapeColor(const uint64_t ShapeNumber, const int NewColor)
     {
+        lock_guard<mutex> LockGuardObject{DrawingCanvasMutexObject};
+
         CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->SetColor(NewColor);
+        CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->SetSetShapeColorToSubShape(true);
         SetUndoMode(true);
         CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->Execute();
         SetUndoMode(false);
+        CompositeDrawShapesCommandsObject.GetCommand(ShapeNumber)->SetSetShapeColorToSubShape(false);
     }
 
 public:
     void ClearDrawedPointsToEaraseLastShapeInCaseOfConflict()
     {
+        lock_guard<mutex> LockGuardObject{DrawingCanvasMutexObject};
+
         DrawnPointsToEraseLastShapeInCaseOfConflict.clear();
         DrawnPointsToEraseLastShapeInCaseOfConflict.reserve(1024 * 1024);
     }
@@ -104,6 +116,8 @@ public:
 public:
     void Draw()
     {
+        lock_guard<mutex> LockGuardObject{DrawingCanvasMutexObject};
+
         for (const auto& Line : Buffer_)
         {
             for (const auto& Char : Line)

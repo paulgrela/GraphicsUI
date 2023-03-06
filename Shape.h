@@ -10,7 +10,7 @@ public:
     {
     }
 public:
-    void SetColor(int ColorParam)
+    void SetColor(const int ColorParam)
     {
         Color_ = ColorParam;
     }
@@ -18,6 +18,14 @@ protected:
     int Color_;
     int Size_;
     Point Position_;
+public:
+    void SetSetShapeColorToSubShape(const bool SetShapeColorToSubShapeParam)
+    {
+        SetShapeColorToSubShape = SetShapeColorToSubShapeParam;
+    }
+protected:
+    bool SetShapeColorToSubShape = false;
+
 };
 
 class UndoableDrawShapeCommand: public UndoableCommand, public Shape
